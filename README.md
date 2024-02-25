@@ -1,32 +1,12 @@
-## initial Commit
+# Bulilding Game Hub
 
-## Install Chakra UI
+[React Basic](https://github.com/subrotoice/react-basic)
 
-## Build a Responsive Layout
+### Initial Commit
 
-```jsx
-// App.js
-function App() {
-  return (
-    <Grid
-      templateAreas={{
-        base: `"nav nav" "main main"`,
-        lg: `"nav nav" "aside main"`,
-      }}
-    >
-      <GridItem area="nav">
-        <NavBar />
-      </GridItem>
-      <Show above="lg">
-        <GridItem area="aside">Aside</GridItem>
-      </Show>
-      <GridItem area="main">Main</GridItem>
-    </Grid>
-  );
-}
-```
+### Install Chakra UI
 
-## Build a NavBar
+### Build a NavBar
 
 ```jsx
 // Horizontal Stack
@@ -36,7 +16,7 @@ function App() {
 </HStack>
 ```
 
-## Implement dark mode
+### Implement dark mode
 
 ```jsx
 // main.tsx
@@ -57,7 +37,7 @@ const theme = extendTheme({ config });
 export default theme;
 ```
 
-## Build the color mode switch
+### Build the color mode switch
 
 ```jsx
 const ColorModeSwitch = () => {
@@ -77,10 +57,10 @@ const ColorModeSwitch = () => {
 };
 ```
 
-## Fetch the games
+### Fetch the games
 
-[Import System](https://prnt.sc/2eBA4idKjvmf){:target="\_blank"}
-[Param of Axios](https://prnt.sc/gWqKmgDzN3eM){:target="\_blank"}
+[Import System](https://prnt.sc/2eBA4idKjvmf)<br>
+[Param of Axios](https://prnt.sc/gWqKmgDzN3eM)
 
 ```jsx
 // api-client.ts
@@ -133,31 +113,91 @@ const GameGrid = () => {
 
 ```
 
-##
+### Creating game hooks
+
+- Hook data and data processing niye kaj kore
+- Hook basically ekta function ja, kichu kaj kore kichu data or method return kore
+  const { games, error } = useGames(); // useGames return object
+  const [games, error] = useGames(); // useGames return array
 
 ```jsx
 
 ```
 
-##
+### useGames Hook
+
+```jsx
+// useGames.ts
+import { useEffect, useState } from "react";
+import apiClient from "../services/api-client";
+import { CanceledError } from "axios";
+
+interface Game {
+  id: number;
+  name: string;
+}
+
+interface FetchGamesResponse {
+  count: number;
+  results: Game[];
+}
+
+const useGames = () => {
+  const [games, setGames] = useState<Game[]>([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const abortController = new AbortController(); // step1: inside useEffect
+    apiClient
+      .get<FetchGamesResponse>("/games", { signal: abortController.signal }) // step2
+      .then((res) => setGames(res.data.results))
+      .catch((err) => {
+        if (err instanceof CanceledError) return; // step 4
+        setError(err.message);
+      });
+
+    return () => abortController.abort(); // step3
+  }, []);
+  return { games, error };
+};
+
+export default useGames;
+
+
+// GameGrid.tsx
+import { Text } from "@chakra-ui/react";
+import useGames from "../hooks/useGames";
+
+const GameGrid = () => {
+  const { games, error } = useGames();
+  return (
+    <>
+      {error && <Text>{error}</Text>}
+      <ul>
+        {games.map((game) => (
+          <li key={game.id}>{game.name}</li>
+        ))}
+      </ul>
+    </>
+  );
+};
+
+
+```
+
+###
 
 ```jsx
 
 ```
 
-##
+###
 
 ```jsx
 
 ```
 
-##
-
-```jsx
-
-```
-
-##
+###
 
 ```jsx
 
