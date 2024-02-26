@@ -185,10 +185,40 @@ const GameGrid = () => {
 
 ```
 
-###
+### Building game card
 
 ```jsx
+// GameGrid.tsx
+<SimpleGrid
+  columns={{ sm: 1, md: 2, lg: 3, xl: 5 }}
+  padding="10px"
+  spacing={10}
+>
+  {games.map((game) => (
+    <GameCard game={game} />
+  ))}
+</SimpleGrid>;
 
+// GameCard.tsx
+import { Game } from "../hooks/useGames";
+import { Card, CardBody, Heading, Image, Text } from "@chakra-ui/react";
+
+interface Props {
+  game: Game; // Imported
+}
+
+const GameCard = ({ game }: Props) => {
+  return (
+    <Card borderRadius={10} overflow="hidden">
+      <Image src={game.background_image} />
+      <CardBody>
+        <Heading fontSize={"2xl"}>{game.name}</Heading>
+      </CardBody>
+    </Card>
+  );
+};
+
+export default GameCard;
 ```
 
 ###
