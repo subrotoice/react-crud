@@ -7,11 +7,13 @@ export interface Platform {
   name: string;
   slug: string;
 }
+
 export interface Game {
   id: number;
   name: string;
   background_image: string;
   parent_platforms: { platform: Platform }[]; // Very Crutial: Design Smale; https://prnt.sc/Mzc4SBafvAjL
+  metacritic: number;
 }
 
 interface FetchGamesResponse {

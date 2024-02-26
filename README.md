@@ -120,10 +120,6 @@ const GameGrid = () => {
   const { games, error } = useGames(); // useGames return object
   const [games, error] = useGames(); // useGames return array
 
-```jsx
-
-```
-
 ### useGames Hook
 
 ```jsx
@@ -280,6 +276,88 @@ const PlatformIconList = ({ platforms }: Props) => {
 };
 
 export default PlatformIconList;
+```
+
+### Displaying critic score
+
+```jsx
+// useGame.ts
+export interface Game {
+  // Add this property
+  metacritic: number;
+}
+
+// GameCard.tsx
+<HStack justifyContent="space-between">
+  <PlatformIconList
+    platforms={game.parent_platforms.map((p) => p.platform)} // Passing array of object, but it sending platform property which is also object
+  />
+  <CriticScore score={game.metacritic} />
+</HStack>;
+
+// CriticScore.tsx
+import { Badge } from "@chakra-ui/react";
+
+interface Props {
+  score: number;
+}
+
+const CriticScore = ({ score }: Props) => {
+  const color = score >= 90 ? "green" : score >= 80 ? "yellow" : "red";
+  return (
+    <Badge borderRadius={2} fontSize="14px" paddingX="4px" colorScheme={color}>
+      {score}
+    </Badge>
+  );
+};
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
 ```
 
 ###
