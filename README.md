@@ -312,10 +312,22 @@ const CriticScore = ({ score }: Props) => {
 };
 ```
 
-###
+### Get optimized images
 
 ```jsx
+// GameCard.tsx
+<Image src={getCroppedImageUrl(game.background_image)} />;
 
+// services/image-url.ts
+const getCroppedImageUrl = (url: string) => {
+  // media.rawg.io/media/games/7cf/7cfc9220b401b7a300e409e539c9afd5.jpg
+  // media.rawg.io/media/crop/600/400/games/7cf/7cfc9220b401b7a300e409e539c9afd5.jpg
+  const target = "media/";
+  const index = url.indexOf(target) + target.length;
+  return url.slice(0, index) + "crop/600/400/" + url.slice(index);
+};
+
+export default getCroppedImageUrl;
 ```
 
 ###
