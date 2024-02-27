@@ -408,9 +408,63 @@ const GameCardContainer = ({ children }: Props) => {
 
 ```
 
-###
+### Fetch the genres (create useGenres.ts hook my coping useGames and change it)
 
 ```jsx
+// GenreList
+import useGenres from "../hooks/useGenres";
+
+const GenreList = () => {
+  const { genres, error, isloading } = useGenres();
+  return (
+    <div>
+      {genres.map((genre) => (
+        <p>{genre.name}</p>
+      ))}
+    </div>
+  );
+};
+
+// useGenres.ts (Hook) same as useGames; Letter we will refactor our code to remove duplication and increase reuseability
+import { useEffect, useState } from "react";
+import apiClient from "../services/api-client";
+import { CanceledError } from "axios";
+
+interface Genre {
+  id: number;
+  name: string;
+}
+interface FetchGenresResponse {
+  count: number;
+  results: Genre[];
+}
+
+const useGenres = () => {
+  const [genres, setGenres] = useState<Genre[]>([]);
+  const [error, setError] = useState("");
+  const [isloading, setIsloading] = useState(false);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+    setIsloading(true);
+    apiClient
+      .get<FetchGenresResponse>("/genres", { signal: abortController.signal })
+      .then((res) => {
+        setGenres(res.data.results);
+        setIsloading(false);
+      })
+      .catch((err) => {
+        if (err instanceof CanceledError) return;
+        setError(err.message);
+        setIsloading(false);
+      });
+
+    return () => abortController.abort();
+  }, []);
+  return { genres, error, isloading };
+};
+
+export default useGenres;
 
 ```
 
