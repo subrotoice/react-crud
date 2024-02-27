@@ -330,9 +330,41 @@ const getCroppedImageUrl = (url: string) => {
 export default getCroppedImageUrl;
 ```
 
-###
+### Show loading skeleton
+
+We will refactor this code in next commit. Because our code is in working stage. If we refactor code in this commit code might be broken down. What will we do in that case?
 
 ```jsx
+// useGame.ts
+const [isloading, setIsloading] = useState(false);
+isLoading(true / False);
+
+// GameGrid.tsx;
+const { games, error, isloading } = useGames();
+const skeletons = [1, 2, 3, 4, 5, 6];
+
+{
+  isloading && skeletons.map((skeleton) => <GameCardSkeleton key={skeleton} />);
+}
+
+// CameCard.tsx
+<Card width="300px" borderRadius={10} overflow="hidden"> // add width to match
+
+// GameCardSkeleton.tsx
+import { Card, CardBody, Skeleton, SkeletonText } from "@chakra-ui/react";
+
+const GameCardSkeleton = () => {
+  return (
+    <div>
+      <Card width="300px" borderRadius={10} overflow="hidden">
+        <Skeleton height="200px" />
+        <CardBody>
+          <SkeletonText />
+        </CardBody>
+      </Card>
+    </div>
+  );
+};
 
 ```
 
