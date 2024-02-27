@@ -6,6 +6,8 @@
 
 ### Install Chakra UI
 
+[Install Chakra UI](https://chakra-ui.com/getting-started)
+
 ### Build a NavBar
 
 ```jsx
@@ -119,6 +121,7 @@ const GameGrid = () => {
 - Hook basically ekta function ja, kichu kaj kore kichu data or method return kore
   const { games, error } = useGames(); // useGames return object
   const [games, error] = useGames(); // useGames return array
+  const [isloading, setIsloading] = useState(false); // Loading status
 
 ### useGames Hook
 
@@ -181,7 +184,7 @@ const GameGrid = () => {
 
 ```
 
-### Building game card
+### Building game card (GameCard.tsx)
 
 ```jsx
 // GameGrid.tsx
@@ -278,7 +281,7 @@ const PlatformIconList = ({ platforms }: Props) => {
 export default PlatformIconList;
 ```
 
-### Displaying critic score
+### Displaying critic score (CriticScore.tsx)
 
 ```jsx
 // useGame.ts
@@ -312,7 +315,7 @@ const CriticScore = ({ score }: Props) => {
 };
 ```
 
-### Get optimized images
+### Get optimized images (build pure javascipt to modify url; getCroppedImageUrl.ts)
 
 ```jsx
 // GameCard.tsx
@@ -330,7 +333,7 @@ const getCroppedImageUrl = (url: string) => {
 export default getCroppedImageUrl;
 ```
 
-### Show loading skeleton
+### Show loading skeleton (GameCardSkeleton.tsx)
 
 We will refactor this code in next commit. Because our code is in working stage. If we refactor code in this commit code might be broken down. What will we do in that case?
 
@@ -368,9 +371,40 @@ const GameCardSkeleton = () => {
 
 ```
 
-###
+### Refactor: remove duplicated styles (GameCardContainer.tsx)
+
+- Just pass <GameCard> as a children to container
 
 ```jsx
+// GameGrid.tsx
+{
+  isloading &&
+    skeletons.map((skeleton) => (
+      <GameCardContainer>
+        <GameCardSkeleton key={skeleton} />
+      </GameCardContainer>
+    ));
+}
+
+// GameCard.tsx
+<Card width="300px" borderRadius={10} overflow="hidden">
+to
+<Card>
+
+// GameCardContainer.tsx
+import { Box } from "@chakra-ui/react";
+import { ReactNode } from "react";
+
+interface Props {
+  children: ReactNode;
+}
+const GameCardContainer = ({ children }: Props) => {
+  return (
+    <Box width="300px" borderRadius={10} overflow="hidden">
+      {children}
+    </Box>
+  );
+};
 
 ```
 
