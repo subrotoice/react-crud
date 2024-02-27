@@ -563,10 +563,33 @@ export interface Genre {
 
 ```
 
-###
+### Show a spinner while fetching the genres (GenreList.tsx)
+
+- We could show skeleton here but try different
 
 ```jsx
-
+// GenreList.tsx
+const GenreList = () => {
+  const { data, error, isloading } = useGenres();
+  if (error) return null; // A way of codding return here
+  if (isloading) return <Spinner />; // we could use inside last return
+  return (
+    <List>
+      {data.map((genre) => (
+        <ListItem key={genre.id}>
+          <HStack paddingY="5px">
+            <Image
+              boxSize="32px"
+              borderRadius={8}
+              src={getCroppedImageUrl(genre.image_background)}
+            />
+            <Text fontSize="2l">{genre.name}</Text>
+          </HStack>
+        </ListItem>
+      ))}
+    </List>
+  );
+};
 ```
 
 ###
