@@ -477,7 +477,7 @@ export default useGenres;
 const { data, error, isloading } = useGames();
 
 // useGames.tsx
-const useGames = () => useData<Game>("/games")(;
+const useGames = () => useData<Game>("/games");
 
 
 // useData.ts
@@ -519,9 +519,47 @@ export default useData;
 
 ```
 
-###
+### Display Genres (Just grab extra field image_background of Genres and Some layout change)
 
 ```jsx
+// App.tsx
+<Grid
+  templateAreas={{
+    base: `"nav nav" "main main"`,
+    lg: `"nav nav" "aside main"`,
+  }}
+  templateColumns={{
+    base: "1fr",
+    lg: "200px 1fr",
+  }}
+>
+
+// GenreList.ts
+const GenreList = () => {
+  const { data } = useGenres();
+  return (
+    <List>
+      {data.map((genre) => (
+        <ListItem key={genre.id}>
+          <HStack paddingY="5px">
+            <Image
+              boxSize="32px"
+              borderRadius={8}
+              src={getCroppedImageUrl(genre.image_background)}
+            />
+            <Text fontSize="2l">{genre.name}</Text>
+          </HStack>
+        </ListItem>
+      ))}
+    </List>
+  );
+};
+
+// useGenres.ts
+export interface Genre {
+  ........
+  image_background: string; // Add this line
+}
 
 ```
 
