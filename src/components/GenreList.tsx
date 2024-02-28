@@ -10,10 +10,12 @@ import {
 import useGenres, { Genre } from "../hooks/useGenres";
 import getCroppedImageUrl from "../services/image-url";
 interface Props {
+  selectedGenre: Genre | null;
   onSelectGenre: (genre: Genre) => void;
 }
-const GenreList = ({ onSelectGenre }: Props) => {
+const GenreList = ({ selectedGenre, onSelectGenre }: Props) => {
   const { data, error, isloading } = useGenres();
+
   if (error) return null; // A way of codding return here
   if (isloading) return <Spinner />; // we could use inside last return
   return (
@@ -28,10 +30,10 @@ const GenreList = ({ onSelectGenre }: Props) => {
             />
             <Button
               fontSize="2l"
+              fontWeight={selectedGenre?.id == genre.id ? "bold" : "normal"}
               variant="link"
               onClick={() => {
                 onSelectGenre(genre);
-                // console.log(genre);
               }}
             >
               {genre.name}

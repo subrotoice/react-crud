@@ -660,6 +660,72 @@ const useData = <T>( // Step1: receiving argument from useGame
   return { data, error, isloading };
 };
 
+```
+
+### Highlight the selected genre
+
+```jsx
+// App.js (Passing selectedGenre)
+<GenreList
+  selectedGenre={selectedGenre}
+  onSelectGenre={(genre) => setSelectedGenre(genre)}
+/>
+
+// GenreList.tsx (receive selectedGenre and use it)
+<Button fontSize="2l" fontWeight={selectedGenre?.id == genre.id ? "bold" : "normal"} > {genre.name} </Button>
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
 
 ```
 
