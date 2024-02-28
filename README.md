@@ -119,9 +119,9 @@ const GameGrid = () => {
 
 - Hook data and data processing niye kaj kore
 - Hook basically ekta function ja, kichu kaj kore kichu data or method return kore
-  const { games, error } = useGames(); // useGames return object
-  const [games, error] = useGames(); // useGames return array
-  const [isloading, setIsloading] = useState(false); // Loading status
+  const { games, error } = useGames(); // useGames return object <br>
+  const [games, error] = useGames(); // useGames return array <br>
+  const [isloading, setIsloading] = useState(false); // Loading status <br>
 
 ### useGames Hook
 
@@ -592,9 +592,74 @@ const GenreList = () => {
 };
 ```
 
-###
+### Filter games by genre (Most Difficult one)
+
+- [Watch Video](https://members.codewithmosh.com/courses/ultimate-react-part1-1/lectures/45916351)
 
 ```jsx
+// App.js ( Use to share props between two component)
+function App() {
+  const [selectedGenre, setSelectedGenre] = useState<Genre | null>(null);
+  return (
+    ...........
+      <Show above="lg">
+        <GridItem area="aside" paddingX={5}>
+          <GenreList onSelectGenre={(genre) => setSelectedGenre(genre)} />
+        </GridItem>
+      </Show>
+      <GridItem area="main">
+        <GameGrid selectedGenre={selectedGenre} />
+      </GridItem>
+    </Grid>
+  );
+}
+
+// GenreList.tsx (passing genre to Parent (app.tsx) component)
+<Button fontSize="2l" variant="link" onClick={() => { onSelectGenre(genre); }} >
+
+// GameGrid.tsx (Passing selected item to hook)
+const { data, error, isloading } = useGames(selectedGenre);
+
+// useGames.ts (Passing some parameter to useData hook)
+// useData hook argument list
+1. endpoint, 2. selected genre id, 3, dependency id if change then rerender
+const useGames = (selectedGenre: Genre | null) =>
+  useData<Game>("/games", { params: { genres: selectedGenre?.id } }, [
+    selectedGenre?.id,
+  ]);
+
+// useData.ts
+const useData = <T>( // Step1: receiving argument from useGame
+  endPoint: string,
+  requestConfig?: AxiosRequestConfig, // receiving params: {......}
+  deps?: any[]
+) => {
+  useEffect(
+    () => {
+      const abortController = new AbortController();
+      setIsloading(true);
+      apiClient
+        .get<FetchResponse<T>>(endPoint, {
+          signal: abortController.signal,
+          ...requestConfig, // Step2: Set params: {.....}
+        })
+        .then((res) => {
+          setData(res.data.results);
+          setIsloading(false);
+        })
+        .catch((err) => {
+          if (err instanceof CanceledError) return;
+          setError(err.message);
+          setIsloading(false);
+        });
+
+      return () => abortController.abort();
+    },
+    deps ? [...deps] : [] // Dependency Depend on
+  );
+  return { data, error, isloading };
+};
+
 
 ```
 
