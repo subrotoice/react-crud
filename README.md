@@ -2,13 +2,13 @@
 
 [React Basic](https://github.com/subrotoice/react-basic)
 
-### Initial Commit
+### - Initial Commit
 
-### Install Chakra UI
+### - Install Chakra UI
 
 [Install Chakra UI](https://chakra-ui.com/getting-started)
 
-### Build a NavBar
+### - Build a NavBar
 
 ```jsx
 // Horizontal Stack
@@ -18,7 +18,7 @@
 </HStack>
 ```
 
-### Implement dark mode
+### - Implement dark mode
 
 ```jsx
 // main.tsx
@@ -39,7 +39,7 @@ const theme = extendTheme({ config });
 export default theme;
 ```
 
-### Build the color mode switch
+### - Build the color mode switch
 
 ```jsx
 const ColorModeSwitch = () => {
@@ -59,7 +59,7 @@ const ColorModeSwitch = () => {
 };
 ```
 
-### Fetch the games
+### - Fetch the games
 
 [Import System](https://prnt.sc/2eBA4idKjvmf)<br>
 [Param of Axios](https://prnt.sc/gWqKmgDzN3eM)
@@ -115,7 +115,7 @@ const GameGrid = () => {
 
 ```
 
-### Creating game hooks
+### - Creating game hooks
 
 - Hook data and data processing niye kaj kore
 - Hook basically ekta function ja, kichu kaj kore kichu data or method return kore
@@ -123,7 +123,7 @@ const GameGrid = () => {
   const [games, error] = useGames(); // useGames return array <br>
   const [isloading, setIsloading] = useState(false); // Loading status <br>
 
-### useGames Hook
+### - useGames Hook
 
 ```jsx
 // useGames.ts
@@ -184,7 +184,7 @@ const GameGrid = () => {
 
 ```
 
-### Building game card (GameCard.tsx)
+### - Building game card (GameCard.tsx)
 
 ```jsx
 // GameGrid.tsx
@@ -220,7 +220,7 @@ const GameCard = ({ game }: Props) => {
 export default GameCard;
 ```
 
-### Displaying platform icons
+### - Displaying platform icons
 
 ```jsx
 // useGames.ts
@@ -281,7 +281,7 @@ const PlatformIconList = ({ platforms }: Props) => {
 export default PlatformIconList;
 ```
 
-### Displaying critic score (CriticScore.tsx)
+### - Displaying critic score (CriticScore.tsx)
 
 ```jsx
 // useGame.ts
@@ -315,7 +315,7 @@ const CriticScore = ({ score }: Props) => {
 };
 ```
 
-### Get optimized images (build pure javascipt to modify url; getCroppedImageUrl.ts)
+### - Get optimized images (build pure javascipt to modify url; getCroppedImageUrl.ts)
 
 ```jsx
 // GameCard.tsx
@@ -333,7 +333,7 @@ const getCroppedImageUrl = (url: string) => {
 export default getCroppedImageUrl;
 ```
 
-### Show loading skeleton (GameCardSkeleton.tsx)
+### - Show loading skeleton (GameCardSkeleton.tsx)
 
 We will refactor this code in next commit. Because our code is in working stage. If we refactor code in this commit code might be broken down. What will we do in that case?
 
@@ -371,7 +371,7 @@ const GameCardSkeleton = () => {
 
 ```
 
-### Refactor: remove duplicated styles (GameCardContainer.tsx)
+### - Refactor: remove duplicated styles (GameCardContainer.tsx)
 
 - Just pass <GameCard> as a children to container
 
@@ -408,7 +408,7 @@ const GameCardContainer = ({ children }: Props) => {
 
 ```
 
-### Fetch the genres (create useGenres.ts hook my coping useGames and change it)
+### - Fetch the genres (create useGenres.ts hook my coping useGames and change it)
 
 ```jsx
 // GenreList
@@ -468,9 +468,10 @@ export default useGenres;
 
 ```
 
-### Create a generic data fetching hook (useData.ts which can fetch any types of data)
+### - Create a generic data fetching hook (useData.ts which can fetch any types of data)
 
-- Only need to pass this: const useUsers = () => useData<Game>("/users");
+- Only need to pass endPoint: <br>
+  const useUsers = () => useData<Game>("/users"); // you get data
 
 ```jsx
 // GameGrid.tsx
@@ -519,7 +520,7 @@ export default useData;
 
 ```
 
-### Display Genres (Just grab extra field image_background of Genres and Some layout change)
+### - Display Genres (Just grab extra field image_background of Genres and Some layout change)
 
 ```jsx
 // App.tsx
@@ -563,7 +564,7 @@ export interface Genre {
 
 ```
 
-### Show a spinner while fetching the genres (GenreList.tsx)
+### - Show a spinner while fetching the genres (GenreList.tsx)
 
 - We could show skeleton here but try different
 
@@ -592,7 +593,7 @@ const GenreList = () => {
 };
 ```
 
-### Filter games by genre (Most Difficult one)
+### - Filter games by genre (Most Difficult one)
 
 - [Watch Video](https://members.codewithmosh.com/courses/ultimate-react-part1-1/lectures/45916351)
 
@@ -662,7 +663,7 @@ const useData = <T>( // Step1: receiving argument from useGame
 
 ```
 
-### Highlight the selected genre
+### - Highlight the selected genre
 
 ```jsx
 // App.js (Passing selectedGenre)
@@ -675,10 +676,44 @@ const useData = <T>( // Step1: receiving argument from useGame
 <Button fontSize="2l" fontWeight={selectedGenre?.id == genre.id ? "bold" : "normal"} > {genre.name} </Button>
 ```
 
-###
+### - Build platform selector (Easily create usePlatforms() hook and fetch data and show)
 
 ```jsx
+// App.js
+<PlatformSelector />;
 
+// PlatformSelector.tsx
+import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
+import React from "react";
+import { BsChevronDown } from "react-icons/bs";
+import usePlatforms from "../hooks/usePlatforms";
+
+const PlatformSelector = () => {
+  const { data, error, isloading } = usePlatforms();
+  if (error) return null;
+  return (
+    <div>
+      <Menu>
+        <MenuButton as={Button} rightIcon={<BsChevronDown />}>
+          Select platform
+        </MenuButton>
+        <MenuList>
+          {data.map((platform) => (
+            <MenuItem key={platform.id}>{platform.name}</MenuItem>
+          ))}
+        </MenuList>
+      </Menu>
+    </div>
+  );
+};
+
+// usePlatforms.ts (Now data fetching is so easy. we can fetch any data by passing endpoint)
+import useData from "./useData";
+import { Platform } from "./useGames";
+
+const usePlatforms = () => useData < Platform > "/platforms/lists/parents";
+
+export default usePlatforms;
 ```
 
 ###
