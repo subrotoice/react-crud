@@ -716,10 +716,44 @@ const usePlatforms = () => useData < Platform > "/platforms/lists/parents";
 export default usePlatforms;
 ```
 
-###
+### Filter games by platform (It's same as filter by Genres)
 
 ```jsx
+// App.js (Passing selected item form parent)
+<PlatformSelector
+  selectedPlatform={selectedPlatform}
+  onSelectPlatform={(platform) => setSelectedPlatform(platform)}
+/>
+<GameGrid
+  selectedGenre={selectedGenre}
+  selectedPlatform={selectedPlatform}
+/>
 
+// GameGrid.tsx
+interface Props {
+  selectedGenre: Genre | null;
+  selectedPlatform: Platform | null;
+}
+const GameGrid = ({ selectedGenre, selectedPlatform }: Props) => {
+  const { data, error, isloading } = useGames(selectedGenre, selectedPlatform);
+.....
+
+// PlatformSelector.tsx
+<MenuButton as={Button} rightIcon={<BsChevronDown />}>
+  {selectedPlatform?.name || "Platform"}
+</MenuButton>
+
+// useGames.ts
+const useGames = (
+  selectedGenre: Genre | null,
+  selectedPlatform: Platform | null
+) =>
+  useData<Game>(
+    "/games",
+    { params: { genres: selectedGenre?.id, platforms: selectedPlatform?.id } },
+    [selectedGenre?.id, selectedPlatform?.id]
+  );
+  ....
 ```
 
 ###
