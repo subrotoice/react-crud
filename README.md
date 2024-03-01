@@ -756,10 +756,58 @@ const useGames = (
   ....
 ```
 
-###
+### Refactor: Extract a query object ( instade of a lot of state variable we use single object here.)
 
 ```jsx
+// App.js
+export interface GameQuery {
+  genre: Genre | null;
+  platform: Platform | null;
+}
 
+function App() {
+  const [gameQuery, setGameQuery] = useState<GameQuery>({} as GameQuery);
+
+  return (
+      <GenreList
+        selectedGenre={gameQuery.genre}
+        onSelectGenre={(genre) => {
+          setGameQuery({ ...gameQuery, genre });
+          // console.log(gameQuery);
+          // console.log(genre);
+          // console.log({ ...gameQuery, genre: genre });
+        }}
+      />
+    <PlatformSelector
+      selectedPlatform={gameQuery.platform}
+      onSelectPlatform={(platform) =>
+        setGameQuery({ ...gameQuery, platform })
+      }
+    />
+    <GameGrid gameQuery={gameQuery} />
+  );
+}
+
+// GameGrid.tsx
+interface Props {
+  gameQuery: GameQuery;
+}
+const GameGrid = ({ gameQuery }: Props) => {
+  const { data, error, isloading } = useGames(gameQuery);
+  .........
+
+// useGames.tsx
+const useGames = (gameQuery: GameQuery) =>
+  useData<Game>(
+    "/games",
+    {
+      params: {
+        genres: gameQuery.genre?.id,
+        platforms: gameQuery.platform?.id,
+      },
+    },
+    [gameQuery]
+  );
 ```
 
 ###
