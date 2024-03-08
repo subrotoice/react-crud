@@ -921,10 +921,46 @@ import noImage from "../assets/no-image-placeholder-6f3882e0.webp";
 if (!url) return noImage;
 ```
 
-###
+### Implement searching ( Adding another poperty to gameQuery object )
 
 ```jsx
+// App.js
+export interface GameQuery {
+  genre: Genre | null;
+  platform: Platform | null;
+  sortOrder: string;
+  searchText: string;
+}
+<NavBar
+  onSearch={(searchText) => setGameQuery({ ...gameQuery, searchText })}
+/>;
 
+// SearchInput.tsx (it passes searchText to Navbar.tsx then it realy to App.js)
+interface Props {
+  onSearch: (searchText: string) => void;
+}
+
+const SearchInput = ({ onSearch }: Props) => {
+  const ref = useRef < HTMLInputElement > null;
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (ref.current) onSearch(ref.current.value);
+      }}
+    >
+      <InputGroup>
+        <InputLeftElement children={<BsSearch />} />
+        <Input
+          ref={ref}
+          borderRadius={20}
+          placeholder="Search game..."
+          variant="filled"
+        />
+      </InputGroup>
+    </form>
+  );
+};
 ```
 
 ###
