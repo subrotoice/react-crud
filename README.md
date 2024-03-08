@@ -716,7 +716,7 @@ const usePlatforms = () => useData < Platform > "/platforms/lists/parents";
 export default usePlatforms;
 ```
 
-### Filter games by platform (It's same as filter by Genres)
+### - Filter games by platform (It's same as filter by Genres)
 
 ```jsx
 // App.js (Passing selected item form parent)
@@ -756,7 +756,7 @@ const useGames = (
   ....
 ```
 
-### Refactor: Extract a query object ( instade of a lot of state variable we use single object here.)
+### - Refactor: Extract a query object ( instade of a lot of state variable we use single object here.)
 
 ```jsx
 // App.js
@@ -810,7 +810,7 @@ const useGames = (gameQuery: GameQuery) =>
   );
 ```
 
-### Build sort selector (Same as Platform Selector section)
+### - Build sort selector (Same as Platform Selector section)
 
 ```jsx
 // App.tsx
@@ -844,7 +844,7 @@ const SortSelector = () => {
 };
 ```
 
-### Sort the games (make funcitonal upper part, passing sortOrder as query string)
+### - Sort the games (make funcitonal upper part, passing sortOrder as query string)
 
 ```jsx
 // App.js ( added query string sortorder | Get notification from SortSelector and stored it in state )
@@ -913,7 +913,7 @@ const SortSelector = ({ onSelectSortOrder, selectedSortOrder }: Props) => {
 };
 ```
 
-### Handel Games with no image (add image to asset folder)
+### - Handel Games with no image (add image to asset folder)
 
 ```jsx
 import noImage from "../assets/no-image-placeholder-6f3882e0.webp";
@@ -921,7 +921,7 @@ import noImage from "../assets/no-image-placeholder-6f3882e0.webp";
 if (!url) return noImage;
 ```
 
-### Implement searching ( Adding another poperty to gameQuery object )
+### - Implement searching ( Adding another poperty to gameQuery object )
 
 ```jsx
 // App.js
@@ -963,10 +963,24 @@ const SearchInput = ({ onSearch }: Props) => {
 };
 ```
 
-###
+### - Add a dynamic page heading
 
 ```jsx
+// GameHeading.tsx
+interface Props {
+  gameQuery: GameQuery;
+}
 
+const GameHeading = ({ gameQuery }: Props) => {
+  const heading = `${gameQuery.platform?.name || ""} ${
+    gameQuery.genre?.name || ""
+  } Games`;
+  return (
+    <Heading as="h1" fontSize="4xl" marginY={5}>
+      {heading}
+    </Heading>
+  );
+};
 ```
 
 ###
