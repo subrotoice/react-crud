@@ -810,10 +810,38 @@ const useGames = (gameQuery: GameQuery) =>
   );
 ```
 
-###
+### Build sort selector (Same as Platform Selector section)
 
 ```jsx
+// App.tsx
+<HStack spacing={5} paddingLeft={2} paddingBottom={5}>
+  <PlatformSelector
+    selectedPlatform={gameQuery.platform}
+    onSelectPlatform={(platform) => setGameQuery({ ...gameQuery, platform })}
+  />
+  <SortSelector />
+</HStack>;
 
+// SortSelector.tsx ; Same like PlatformSelector.tsx
+const SortSelector = () => {
+  return (
+    <div>
+      <Menu>
+        <MenuButton as={Button} rightIcon={<BsChevronDown />}>
+          Order by: Relevance
+        </MenuButton>
+        <MenuList>
+          <MenuItem>Relevance</MenuItem>
+          <MenuItem>Date added</MenuItem>
+          <MenuItem>Name</MenuItem>
+          <MenuItem>Release date</MenuItem>
+          <MenuItem>Popularity</MenuItem>
+          <MenuItem>Average rating</MenuItem>
+        </MenuList>
+      </Menu>
+    </div>
+  );
+};
 ```
 
 ###
