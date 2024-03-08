@@ -913,10 +913,12 @@ const SortSelector = ({ onSelectSortOrder, selectedSortOrder }: Props) => {
 };
 ```
 
-###
+### Handel Games with no image (add image to asset folder)
 
 ```jsx
-
+import noImage from "../assets/no-image-placeholder-6f3882e0.webp";
+// image-url.ts
+if (!url) return noImage;
 ```
 
 ###
