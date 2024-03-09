@@ -983,10 +983,15 @@ const GameHeading = ({ gameQuery }: Props) => {
 };
 ```
 
-###
+### Cleane Up The genres (Some basic css & design change)
 
 ```jsx
-
+// GenreList.tsx
+<Heading fontSize="2xl" marginBottom={3}>
+  Genres
+</Heading>
+<Image boxSize="32px" borderRadius={8} objectFit="cover" src="" />
+<Button fontSize="2l" whiteSpace="wrap">Text</Button>
 ```
 
 ###
