@@ -1012,10 +1012,39 @@ const GameHeading = ({ gameQuery }: Props) => {
 </Card>
 ```
 
-###
+### Add emojis (Little bit Tricky)
+
+- To build component: First create component, then Set what it will received as props and everything, then go to App.js and passes all data and function as props.
 
 ```jsx
+// useGames.tsx
+export interface Game {
+  ............
+  rating_top: number; // add this field
+}
 
+// GameCard.tsx
+<Emoji rating={game.rating_top} />
+
+// Emoji.tsx (Import images and object mapper used for ImageProps)
+import bullsEye from "../assets/bulls-eye.webp";
+import thumbsUp from "../assets/thumbs-up.webp";
+import meh from "../assets/meh.webp";
+import { Image, ImageProps } from "@chakra-ui/react";
+
+interface Props {
+  rating: number;
+}
+
+// Here object map(key: value) system is used. We need not to use ugly if statement
+const Emoji = ({ rating }: Props) => {
+  const emojiMap: { [rating: number]: ImageProps } = { // Anotate this object with type
+    3: { src: meh, alt: "Meh", boxSize: "25px" },
+    4: { src: thumbsUp, alt: "good", boxSize: "25px" },
+    5: { src: bullsEye, alt: "Exceptional", boxSize: "35px" },
+  };
+  return <Image {...emojiMap[rating]} marginTop={1} />;
+};
 ```
 
 ###
