@@ -994,6 +994,66 @@ const GameHeading = ({ gameQuery }: Props) => {
 <Button fontSize="2l" whiteSpace="wrap">Text</Button>
 ```
 
+### Clean up the game cards
+
+```jsx
+// GameCard.tsx (Just heading down to the logo)
+<Card>
+  <Image src={getCroppedImageUrl(game.background_image)} />
+  <CardBody>
+    <HStack justifyContent="space-between" marginBottom={2}>
+      <PlatformIconList
+        platforms={game.parent_platforms.map((p) => p.platform)} // Passing array of object, but it sending platform property which is also object
+      />
+      <CriticScore score={game.metacritic} />
+    </HStack>
+    <Heading fontSize={"2xl"}>{game.name}</Heading>
+  </CardBody>
+</Card>
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
+###
+
+```jsx
+
+```
+
 ###
 
 ```jsx
