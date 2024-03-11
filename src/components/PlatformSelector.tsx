@@ -1,7 +1,15 @@
-import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
+import {
+  Button,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Spinner,
+} from "@chakra-ui/react";
 import React from "react";
 import { BsChevronDown } from "react-icons/bs";
 import usePlatforms from "../hooks/usePlatforms";
+import usePlatformsStatic from "../hooks/usePlatformsStatic";
 import { Platform } from "../hooks/useGames";
 
 interface Props {
@@ -9,8 +17,10 @@ interface Props {
   onSelectPlatform: (platform: Platform | null) => void;
 }
 const PlatformSelector = ({ selectedPlatform, onSelectPlatform }: Props) => {
-  const { data, error, isloading } = usePlatforms();
-  if (error) return null;
+  const { data, error, isLoading } = usePlatformsStatic();
+  if (error) return null; // A way of codding return here
+  if (isLoading) return <Spinner />; // we could use inside last return
+
   return (
     <div>
       <Menu>

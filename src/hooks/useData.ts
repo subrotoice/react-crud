@@ -7,6 +7,7 @@ interface FetchResponse<T> {
   results: T[];
 }
 
+// received 3 argument (endpoint, params?, dependency?)
 const useData = <T>(
   endPoint: string,
   requestConfig?: AxiosRequestConfig, // receiving params

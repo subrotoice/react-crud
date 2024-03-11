@@ -471,7 +471,8 @@ export default useGenres;
 ### - Create a generic data fetching hook (useData.ts which can fetch any types of data)
 
 - Only need to pass endPoint: <br>
-  const useUsers = () => useData<Game>("/users"); // you get data
+  const useUsers = () => useData<Game>("/users"); // you get data <br>
+  Later on it received 3 argument: useData(endpoint, params?, dependency?)
 
 ```jsx
 // GameGrid.tsx
@@ -481,7 +482,7 @@ const { data, error, isloading } = useGames();
 const useGames = () => useData<Game>("/games");
 
 
-// useData.ts
+// useData.ts | // after this received 3 argument (endpoint, params?, dependency?)
 import { useEffect, useState } from "react";
 import apiClient from "../services/api-client";
 import { CanceledError } from "axios";
@@ -596,6 +597,7 @@ const GenreList = () => {
 ### - Filter games by genre (Most Difficult one)
 
 - [Watch Video](https://members.codewithmosh.com/courses/ultimate-react-part1-1/lectures/45916351)
+- useData recived 3 arguments. useData(endpoint, params?, dependency?)
 
 ```jsx
 // App.js ( Use to share props between two component)
@@ -629,7 +631,7 @@ const useGames = (selectedGenre: Genre | null) =>
     selectedGenre?.id,
   ]);
 
-// useData.ts
+// useData.ts | useData(endpoint, params?, dependency?)
 const useData = <T>( // Step1: receiving argument from useGame
   endPoint: string,
   requestConfig?: AxiosRequestConfig, // receiving params: {......}
@@ -963,7 +965,7 @@ const SearchInput = ({ onSearch }: Props) => {
 };
 ```
 
-### - Add a dynamic page heading
+### - Add a dynamic page heading (using this ``)
 
 ```jsx
 // GameHeading.tsx
@@ -1047,9 +1049,88 @@ const Emoji = ({ rating }: Props) => {
 };
 ```
 
-###
+### Load genres from app (Genres, Platforms stored in data/genres.ts)
+
+Genres, Platforms which is rearly change can store our server and load as static data, So there will be no loading indicator, and load data instalnly <br>
+It returns object and keep it as useData return so no need to change in GenreList.tsx
 
 ```jsx
+// useGenres.ts
+import genres from "../data/genres";
+
+export interface Genre {
+  id: number;
+  name: string;
+  image_background: string;
+}
+// const useGenres = () => useData<Genre>("/genres"); // It Was
+const useGenres = () => ({ data: genres, isloading: false, error: null });
+
+// usePlatformsStatic.ts (it has also a dynamic load data from server usePlatforms.ts)
+import platforms from "../data/platforms";
+const usePlatforms = () => ({ data: platforms, error: null, isLoading: false });
+export default usePlatforms;
+
+
+// data/genres.ts (copy this form network request)
+export default [
+  {
+    id: 4,
+    name: "Action",
+    slug: "action",
+    games_count: 178704,
+    image_background:
+      "https://media.rawg.io/media/games/d82/d82990b9c67ba0d2d09d4e6fa88885a7.jpg",
+    games: [
+      {
+        id: 3498,
+        slug: "grand-theft-auto-v",
+        name: "Grand Theft Auto V",
+        added: 20596,
+      },
+      {
+        id: 3328,
+        slug: "the-witcher-3-wild-hunt",
+        name: "The Witcher 3: Wild Hunt",
+        added: 19868,
+      },
+      {
+        id: 5286,
+        slug: "tomb-raider",
+        name: "Tomb Raider (2013)",
+        added: 16252,
+      },
+      {
+        id: 13536,
+        slug: "portal",
+        name: "Portal",
+        added: 15947,
+      },
+      {
+        id: 12020,
+        slug: "left-4-dead-2",
+        name: "Left 4 Dead 2",
+        added: 15815,
+      },
+      {
+        id: 5679,
+        slug: "the-elder-scrolls-v-skyrim",
+        name: "The Elder Scrolls V: Skyrim",
+        added: 15503,
+      },
+    ],
+  },
+  {
+    id: 51,
+    name: "Indie",
+    slug: "indie",
+    games_count: 62865,
+    image_background:
+      "https://media.rawg.io/media/games/f46/f466571d536f2e3ea9e815ad17177501.jpg",
+    games: [
+  .......................
+  ................,
+];
 
 ```
 
