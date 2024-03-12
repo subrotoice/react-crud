@@ -985,7 +985,7 @@ const GameHeading = ({ gameQuery }: Props) => {
 };
 ```
 
-### Cleane Up The genres (Some basic css & design change)
+### - Cleane Up The genres (Some basic css & design change)
 
 ```jsx
 // GenreList.tsx
@@ -996,7 +996,7 @@ const GameHeading = ({ gameQuery }: Props) => {
 <Button fontSize="2l" whiteSpace="wrap">Text</Button>
 ```
 
-### Clean up the game cards
+### - Clean up the game cards
 
 ```jsx
 // GameCard.tsx (Just heading down to the logo)
@@ -1014,7 +1014,7 @@ const GameHeading = ({ gameQuery }: Props) => {
 </Card>
 ```
 
-### Add emojis (Little bit Tricky)
+### - Add emojis (Little bit Tricky)
 
 - To build component: First create component, then Set what it will received as props and everything, then go to App.js and passes all data and function as props.
 
@@ -1049,7 +1049,7 @@ const Emoji = ({ rating }: Props) => {
 };
 ```
 
-### Load genres from app (Genres, Platforms stored in data/genres.ts)
+### - Load genres from app (Genres, Platforms stored in data/genres.ts)
 
 Genres, Platforms which is rearly change can store our server and load as static data, So there will be no loading indicator, and load data instalnly <br>
 It returns object and keep it as useData return so no need to change in GenreList.tsx
@@ -1134,7 +1134,7 @@ export default [
 
 ```
 
-### Customized the theme to get darker grays
+### - Customized the theme to get darker grays
 
 ```jsx
 // theme.ts
@@ -1157,17 +1157,22 @@ const theme = extendTheme({
 });
 ```
 
-### Refactor game grid (little change)
+### - Refactor game grid (little change)
 
 ```jsx
 // GameGrid.tsx (two return statement)
 if (error) return <Text>error</Text>;
 ```
 
-###
+### - Deploy to vercel
 
-```jsx
+- First install vercel cli then run vercel to deploy
+- Then connect from vercel repositor of github
 
+```besh
+npm i -g vercel // Vercel CLI installation
+
+vercel // Deploy application| After this you will get production link
 ```
 
 ###
