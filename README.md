@@ -1157,10 +1157,11 @@ const theme = extendTheme({
 });
 ```
 
-###
+### Refactor game grid (little change)
 
 ```jsx
-
+// GameGrid.tsx (two return statement)
+if (error) return <Text>error</Text>;
 ```
 
 ###
