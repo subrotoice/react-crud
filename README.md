@@ -1170,14 +1170,61 @@ if (error) return <Text>error</Text>;
 - Then connect from vercel repositor of github
 
 ```besh
-npm i -g vercel // Vercel CLI installation
-
-vercel // Deploy application| After this you will get production link
+npm i -g vercel
 ```
 
-###
+```besh
+vercel
+```
+
+## - Fetching games using react query in this project
+
+```bash
+npm i @tanstack/react-query@4.28
+npm i @tanstack/react-query-devtools@4.28
+```
 
 ```jsx
+// main.tsx
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; // add
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"; // add
+
+const queryClient = new QueryClient(); // add
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  <React.StrictMode>
+    <ChakraProvider theme={theme}>
+      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+      <QueryClientProvider client={queryClient}> // add
+        <App />
+        <ReactQueryDevtools /> // add
+      </QueryClientProvider>
+    </ChakraProvider>
+  </React.StrictMode>
+);
+
+// useGenres.ts
+import { useQueries, useQuery } from "@tanstack/react-query";
+import genres from "../data/genres";
+import apiClient from "../services/api-client";
+import { FetchResponse } from "./useData";
+
+export interface Genre {
+  id: number;
+  name: string;
+  image_background: string;
+}
+// GenreList.tsx
+  {data?.results.map((genre) => ()}
+
+// useQuery() return {data, error, isLoading, .........}
+const useGenres = () =>
+  useQuery({
+    queryKey: ["genres"],
+    queryFn: () =>
+      apiClient.get<FetchResponse<Genre>>("/genres").then((res) => res.data),
+    staleTime: 24 * 60 * 60 * 1000, // 24h
+    initialData: { count: genres.length, results: genres }, // data/genres.ts locally saved
+  });
 
 ```
 
