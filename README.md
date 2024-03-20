@@ -1159,6 +1159,9 @@ const theme = extendTheme({
 
 ### - Refactor game grid (little change)
 
+initialData: { count: genres.length, results: genres }, if remove this line then backend call intially, so it reduce backend hit, and
+staleTime: 24 _ 60 _ 60 \* 1000, // after 24h react query fetch fresh data from backend
+
 ```jsx
 // GameGrid.tsx (two return statement)
 if (error) return <Text>error</Text>;
@@ -1223,15 +1226,35 @@ const useGenres = () =>
     queryFn: () =>
       apiClient.get<FetchResponse<Genre>>("/genres").then((res) => res.data),
     staleTime: 24 * 60 * 60 * 1000, // 24h
-    initialData: { count: genres.length, results: genres }, // data/genres.ts locally saved
+    initialData: { count: genres.length, results: genres }, // data/genres.ts locally stored. If we remove this line then it hit backend and increase load
   });
 
 ```
 
-###
+### - Fetching Platforms RQ (same as fetching games)
 
 ```jsx
+// PlatformSelector.tsx
+const { data, error, isLoading } = usePlatformsStatic();
+{data.results.map((platform) => ()}
 
+// usePlatformsStatic.ts
+import { useQuery } from "@tanstack/react-query";
+import platforms from "../data/platforms";
+import apiClient from "../services/api-client";
+import { FetchResponse } from "./useData";
+import { Platform } from "./useGames";
+
+const usePlatforms = () =>
+  useQuery({
+    queryKey: ["platforms"],
+    queryFn: () =>
+      apiClient.get <
+      FetchResponse <
+      Platform >> "/platforms/lists/parents".then((res) => res.data),
+    staleTime: 24 * 60 * 60 * 1000, // 24h
+    initialData: { count: platforms.length, results: platforms },
+  });
 ```
 
 ###
