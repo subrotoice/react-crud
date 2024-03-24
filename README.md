@@ -1180,7 +1180,11 @@ npm i -g vercel
 vercel
 ```
 
-## - Fetching games using react query in this project
+# Part 2 (Game App)
+
+---
+
+## - Fetching genres: using react query in this project
 
 ```bash
 npm i @tanstack/react-query@4.28
@@ -1231,7 +1235,12 @@ const useGenres = () =>
 
 ```
 
-### - Fetching Platforms RQ (same as fetching games)
+### - Fetching Platforms: React Query (same as fetching genres)
+
+_Cache mane local theke kichu dekhiye dewa, tarpor network theke fetch kora so that we have smoth UI_
+
+- staleTime: Je somo porjonto netwok e data fetch korbe na, ['games', genres] queryKe, in second time it fetch data from catch, then if data is fresh then no network request, if stale then show from cache and then fetch from network, if any change react update that immediately https://prnt.sc/oQlbemwMvwzu
+- cacheTime: If no observer then cache is deleted, Default time: 5 min
 
 ```jsx
 // PlatformSelector.tsx
@@ -1257,8 +1266,60 @@ const usePlatforms = () =>
   });
 ```
 
-###
+### - Fetching games (replace useData with useQuery)
+
+- useQuery has everything that has useData but much better way with caching
+- useQuery ke sudhu data ene dite hobe. queryKey useEffect er dependency er moto kaj kore, new key hole new fetch otherwise fetch form cache no loading
 
 ```jsx
+// useGames.ts (old -> useData) // useData er kace function er moto parameter pass kore data ance. No caching
+// useGames(endPoint, queryString, dependencyOfUseEffect)
+const useGames = (gameQuery: GameQuery) =>
+  useData <
+  Game >
+  ("/games",
+  {
+    params: {
+      genres: gameQuery.genre?.id,
+      platforms: gameQuery.platform?.id,
+      ordering: gameQuery.sortOrder,
+      search: gameQuery.searchText,
+    },
+  },
+  [gameQuery]);
 
+// useGames.ts (new -> useGames) // here apiClient(axios) data ene dicce
+const useGames = (gameQuery: GameQuery) =>
+  useQuery({
+    queryKey: ["games", gameQuery],
+    queryFn: () =>
+      apiClient.get <
+      FetchResponse <
+      Game >>
+        ("/games",
+        {
+          params: {
+            genres: gameQuery.genre?.id,
+            parent_platforms: gameQuery.platform?.id,
+            ordering: gameQuery.sortOrder,
+            search: gameQuery.searchText,
+          },
+        }).then((res) => res.data),
+  });
+
+// api-client.ts (FetchResponse interface cut form useData.ts)
+import axios from "axios";
+
+export interface FetchResponse<T> {
+  count: number;
+  results: T[];
+}
+
+export default axios.create({
+  baseURL: "https://api.rawg.io/api",
+  params: {
+    //params is query String https://api.rawg.io/api/platforms?key=YOUR_API_KEY
+    key: "b0d7069520c04a5c8e168712f0464506",
+  },
+});
 ```
