@@ -1365,3 +1365,70 @@ export interface Platform {
   slug: string;
 }
 ```
+
+### - Refactor: Create a reusable API client (APIClient class)
+
+- In the case of CRUD is more convenient using Class
+
+```jsx
+// useGenres.ts
+const apiClient = new APIClient() < Genre > "/genres";
+
+const useGenres = () =>
+  useQuery({
+    queryKey: ["genres"],
+    queryFn: apiClient.getAll,
+    staleTime: 24 * 60 * 60 * 1000, // 24h
+    initialData: { count: genres.length, results: genres }, // data/genres.ts locally saved
+  });
+
+// useGames.ts
+const apiClient = new APIClient() < Game > "/games";
+
+const useGames = (gameQuery: GameQuery) =>
+  useQuery({
+    queryKey: ["games", gameQuery.platform?.name, gameQuery],
+    queryFn: () =>
+      apiClient.getAll({
+        params: {
+          genres: gameQuery.genre?.id,
+          parent_platforms: gameQuery.platform?.id,
+          ordering: gameQuery.sortOrder,
+          search: gameQuery.searchText,
+        },
+      }),
+  });
+
+// api-client.ts
+import axios, { AxiosRequestConfig } from "axios";
+
+export interface FetchResponse<T> {
+  count: number;
+  results: T[];
+}
+
+const axiosInstance = axios.create({
+  baseURL: "https://api.rawg.io/api",
+  params: {
+    //params is query String https://api.rawg.io/api/platforms?key=YOUR_API_KEY
+    key: "b0d7069520c04a5c8e168712f0464506",
+  },
+});
+
+class APIClient<T> {
+  endPoint: string;
+  constructor(endPoint: string) {
+    this.endPoint = endPoint;
+  }
+
+  getAll = (config: AxiosRequestConfig) => {
+    return (
+      axiosInstance.get <
+      FetchResponse <
+      T >> (this.endPoint, config).then((res) => res.data)
+    );
+  };
+}
+
+export default APIClient;
+```
