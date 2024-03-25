@@ -1323,3 +1323,45 @@ export default axios.create({
   },
 });
 ```
+
+### - Fetching Platforms: React Query (same as fetching genres)
+
+_Cache mane local theke kichu dekhiye dewa, tarpor network theke fetch kora so that we have smoth UI_
+
+- staleTime: Je somo porjonto netwok e data fetch korbe na, ['games', genres] queryKe, in second time it fetch data from catch, then if data is fresh then no network request, if stale then show from cache and then fetch from network, if any change react update that immediately https://prnt.sc/oQlbemwMvwzu
+- cacheTime: If no observer then cache is deleted, Default time: 5 min
+
+```jsx
+// PlatformSelector.tsx
+const { data, error, isLoading } = usePlatformsStatic();
+{data.results.map((platform) => ()}
+
+// usePlatformsStatic.ts
+import { useQuery } from "@tanstack/react-query";
+import platforms from "../data/platforms";
+import apiClient from "../services/api-client";
+import { FetchResponse } from "./useData";
+import { Platform } from "./useGames";
+
+const usePlatforms = () =>
+  useQuery({
+    queryKey: ["platforms"],
+    queryFn: () =>
+      apiClient.get <
+      FetchResponse <
+      Platform >> "/platforms/lists/parents".then((res) => res.data),
+    staleTime: 24 * 60 * 60 * 1000, // 24h
+    initialData: { count: platforms.length, results: platforms },
+  });
+```
+
+### - Refactor: Removing duplicate interfaces (usePlatformsStatic.ts - Platform interface shift to this file)
+
+```jsx
+// usePlatformsStatic.ts (cut form useGame and paste it here, and change import statement)
+export interface Platform {
+  id: number;
+  name: string;
+  slug: string;
+}
+```

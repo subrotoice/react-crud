@@ -6,11 +6,8 @@ import {
   MenuList,
   Spinner,
 } from "@chakra-ui/react";
-import React from "react";
 import { BsChevronDown } from "react-icons/bs";
-import usePlatforms from "../hooks/usePlatforms";
-import usePlatformsStatic from "../hooks/usePlatformsStatic";
-import { Platform } from "../hooks/useGames";
+import usePlatformsStatic, { Platform } from "../hooks/usePlatformsStatic";
 
 interface Props {
   selectedPlatform: Platform | null;
