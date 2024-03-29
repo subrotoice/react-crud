@@ -1540,7 +1540,7 @@ const useGames = (gameQuery: GameQuery) =>
 [React Infinite Scroll Component](https://www.npmjs.com/package/react-infinite-scroll-component)
 
 - DataLenght: represents the number of data currently loaded, and it's used to update the dataLength prop of the InfiniteScroll component.
-- Wrap in <InfiniteScroll>
+- Wrap in '< InfiniteScroll >'
 
 ```bash
 npm i react-infinite-scroll-component
@@ -1623,10 +1623,48 @@ export interface GameQuery {
 }
 ```
 
-### -
+### - Refactor: Create lookup hooks (useGenre.ts, usePlatform.ts)
+
+- Create hook like useGenre.ts to find single genre object from all genres
+- Perform "Organize Import"
 
 ```jsx
-//
+// useGenre.ts (1: get all genres using useGenres() then use find method)
+import useGenres from "./useGenres";
+
+const useGenre = (selectedGenreId?: number) => {
+  const { data: genres } = useGenres();
+  return genres?.results.find((g) => g.id === selectedGenreId);
+};
+export default useGenre;
+
+// usePlatform.ts
+import usePlatforms from "./usePlatformsStatic";
+
+const usePlatform = (selectedPlatformId?: number) => {
+  const { data: platforms } = usePlatforms();
+  return platforms?.results.find((p) => p.id === selectedPlatformId);
+};
+
+// GameHeading.tsx
+import usePlatform from "../hooks/usePlatform";
+import useGenre from "../hooks/useGenre";
+
+interface Props {
+  gameQuery: GameQuery;
+}
+
+const GameHeading = ({ gameQuery }: Props) => {
+  const genre = useGenre(gameQuery.genreId);
+  const platform = usePlatform(gameQuery.platformId);
+
+  const heading = `${platform?.name || ""} ${genre?.name || ""} Games`;
+  return (
+    <Heading as='h1' fontSize='4xl' marginY={5}>
+      {heading}
+    </Heading>
+  );
+};
 ```
 
 ### -
