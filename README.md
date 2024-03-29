@@ -1608,10 +1608,19 @@ const GameGrid = ({ gameQuery }: Props) => {
 };
 ```
 
-### -
+### - Refactor: Simplify game query (Idal way of refactoring)
+
+- Use F2 to rename all occurance to genreId
+- Right click genreId and "go to reference"
 
 ```jsx
-//
+// App.js
+export interface GameQuery {
+  genreId?: number; // Change Happend here
+  platformId?: number; // Change Happend here
+  sortOrder: string;
+  searchText: string;
+}
 ```
 
 ### -

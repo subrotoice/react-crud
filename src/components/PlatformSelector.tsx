@@ -10,11 +10,14 @@ import { BsChevronDown } from "react-icons/bs";
 import usePlatformsStatic, { Platform } from "../hooks/usePlatformsStatic";
 
 interface Props {
-  selectedPlatform: Platform | null;
+  selectedPlatformId?: number;
   onSelectPlatform: (platform: Platform | null) => void;
 }
-const PlatformSelector = ({ selectedPlatform, onSelectPlatform }: Props) => {
+const PlatformSelector = ({ selectedPlatformId, onSelectPlatform }: Props) => {
   const { data, error, isLoading } = usePlatformsStatic();
+  const selectedPlatform = data?.results.find(
+    (p) => p.id === selectedPlatformId
+  );
   if (error) return null; // A way of codding return here
   if (isLoading) return <Spinner />; // we could use inside last return
 
@@ -25,7 +28,7 @@ const PlatformSelector = ({ selectedPlatform, onSelectPlatform }: Props) => {
           {selectedPlatform?.name || "Platform"}
         </MenuButton>
         <MenuList>
-          {data.results.map((platform) => (
+          {data?.results.map((platform) => (
             <MenuItem
               key={platform.id}
               onClick={() => onSelectPlatform(platform)}
