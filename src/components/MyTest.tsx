@@ -1,37 +1,42 @@
 import React from "react";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
-const MyTest = () => {
-  const Genre = {
-    id: 1,
-    name: "Genre1",
-    image_background: "amas.png",
-  };
-  const Genre2 = {
-    id: 2,
-    name: "Genre2",
-    image_background: "Jaan.png",
-  };
-  const Genre3 = {
-    id: 3,
-    name: "Genre2",
-    image_background: "Jaan.png",
-  };
-  const Platform = {
-    id: 1,
-    name: "Platform_oirginal",
-    slug: "platform",
-  };
-
-  const gameQuery = {
-    genre: Genre,
-    platform: Platform,
-  };
-
-  let gameQuery2 = { ...gameQuery, Genre2 };
-
-  console.log(gameQuery2);
-
-  return <div>MyTest</div>;
+const fetchPosts = async ({ asdf = 1 }) => {
+  return await fetch(
+    `https://api.rawg.io/api/games?page=${asdf}&page_size=10&key=b0d7069520c04a5c8e168712f0464506`
+  ).then((res) => res.json());
 };
 
-export default MyTest;
+const PostList = () => {
+  const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery(
+    ["games"],
+    fetchPosts,
+    {
+      getNextPageParam: (lastPage, allPages) => {
+        return allPages.length + 1;
+      },
+    }
+  );
+
+  if (isFetching) return <div>Loading...</div>;
+  console.log(data);
+
+  return (
+    <div>
+      {data?.pages.map((page, pageIndex) => (
+        <React.Fragment key={pageIndex}>
+          {page.results.map((post, gameIndex) => (
+            <div key={post.id}>
+              {pageIndex * 10 + gameIndex + 1} {post.name}
+            </div>
+          ))}
+        </React.Fragment>
+      ))}
+      {hasNextPage && (
+        <button onClick={() => fetchNextPage()}>Load More</button>
+      )}
+    </div>
+  );
+};
+
+export default PostList;

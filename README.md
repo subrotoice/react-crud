@@ -12,8 +12,8 @@
 
 ```jsx
 // Horizontal Stack
-<HStack justifyContent="space-between" padding="10px">
-  <Image src={logo} boxSize="60px" />
+<HStack justifyContent='space-between' padding='10px'>
+  <Image src={logo} boxSize='60px' />
   <ColorModeSwitch />
 </HStack>
 ```
@@ -48,7 +48,7 @@ const ColorModeSwitch = () => {
     <div>
       <HStack>
         <Switch
-          colorScheme="green"
+          colorScheme='green'
           isChecked={colorMode === "dark"}
           onChange={toggleColorMode}
         />
@@ -190,7 +190,7 @@ const GameGrid = () => {
 // GameGrid.tsx
 <SimpleGrid
   columns={{ sm: 1, md: 2, lg: 3, xl: 5 }}
-  padding="10px"
+  padding='10px'
   spacing={10}
 >
   {games.map((game) => (
@@ -208,7 +208,7 @@ interface Props {
 
 const GameCard = ({ game }: Props) => {
   return (
-    <Card borderRadius={10} overflow="hidden">
+    <Card borderRadius={10} overflow='hidden'>
       <Image src={game.background_image} />
       <CardBody>
         <Heading fontSize={"2xl"}>{game.name}</Heading>
@@ -291,7 +291,7 @@ export interface Game {
 }
 
 // GameCard.tsx
-<HStack justifyContent="space-between">
+<HStack justifyContent='space-between'>
   <PlatformIconList
     platforms={game.parent_platforms.map((p) => p.platform)} // Passing array of object, but it sending platform property which is also object
   />
@@ -308,7 +308,7 @@ interface Props {
 const CriticScore = ({ score }: Props) => {
   const color = score >= 90 ? "green" : score >= 80 ? "yellow" : "red";
   return (
-    <Badge borderRadius={2} fontSize="14px" paddingX="4px" colorScheme={color}>
+    <Badge borderRadius={2} fontSize='14px' paddingX='4px' colorScheme={color}>
       {score}
     </Badge>
   );
@@ -579,13 +579,13 @@ const GenreList = () => {
     <List>
       {data.map((genre) => (
         <ListItem key={genre.id}>
-          <HStack paddingY="5px">
+          <HStack paddingY='5px'>
             <Image
-              boxSize="32px"
+              boxSize='32px'
               borderRadius={8}
               src={getCroppedImageUrl(genre.image_background)}
             />
-            <Text fontSize="2l">{genre.name}</Text>
+            <Text fontSize='2l'>{genre.name}</Text>
           </HStack>
         </ListItem>
       ))}
@@ -956,8 +956,8 @@ const SearchInput = ({ onSearch }: Props) => {
         <Input
           ref={ref}
           borderRadius={20}
-          placeholder="Search game..."
-          variant="filled"
+          placeholder='Search game...'
+          variant='filled'
         />
       </InputGroup>
     </form>
@@ -978,7 +978,7 @@ const GameHeading = ({ gameQuery }: Props) => {
     gameQuery.genre?.name || ""
   } Games`;
   return (
-    <Heading as="h1" fontSize="4xl" marginY={5}>
+    <Heading as='h1' fontSize='4xl' marginY={5}>
       {heading}
     </Heading>
   );
@@ -1003,7 +1003,7 @@ const GameHeading = ({ gameQuery }: Props) => {
 <Card>
   <Image src={getCroppedImageUrl(game.background_image)} />
   <CardBody>
-    <HStack justifyContent="space-between" marginBottom={2}>
+    <HStack justifyContent='space-between' marginBottom={2}>
       <PlatformIconList
         platforms={game.parent_platforms.map((p) => p.platform)} // Passing array of object, but it sending platform property which is also object
       />
@@ -1431,4 +1431,106 @@ class APIClient<T> {
 }
 
 export default APIClient;
+```
+
+### - Implementing Infinite Queries
+
+- In the case of CRUD is more convenient using Class
+- [nextParam](https://prnt.sc/fe1d0phEzpOd)
+- [data] Where data: { pageParam, pages }, pages: { [], [{next, results}, {}] } this data is from useInfiniteQuery not actual server response, useInfiniteQuery proces server response this way
+
+```jsx
+// Testing.tsx
+import React from "react";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+
+const fetchPosts = async ({ pageParam = 1 }) => {
+  return await fetch(
+    `https://api.rawg.io/api/games?page=${pageParam}&page_size=10&key=b0d7069520c04a5c8e168712f0464506`
+  ).then((res) => res.json());
+};
+
+const PostList = () => {
+  const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery(
+    ["games"],
+    fetchPosts,
+    {
+      getNextPageParam: (lastPage, allPages) => {
+        return allPages.length + 1; // Generate pageParam (exact Same name) which is an array[]  https://prnt.sc/fe1d0phEzpOd
+      },
+    }
+  );
+
+  if (isFetching) return <div>Loading...</div>;
+  console.log(data);
+
+  return (
+    <div>
+      {data?.pages.map((page, pageIndex) => (
+        <React.Fragment key={pageIndex}>
+          {page.results.map((post, gameIndex) => (
+            <div key={post.id}>
+              {pageIndex * 10 + gameIndex + 1} {post.name}
+            </div>
+          ))}
+        </React.Fragment>
+      ))}
+      {hasNextPage && (
+        <button onClick={() => fetchNextPage()}>Load More</button>
+      )}
+    </div>
+  );
+};
+
+// GameGrid.tsx
+{data?.pages.map((page, pageIndex) => (
+  <React.Fragment key={pageIndex}>
+    {page.results.map((game, gameIndex) => (
+      <GameCardContainer key={gameIndex}>
+        <GameCard game={game} />
+      </GameCardContainer>
+    ))}
+  </React.Fragment>
+))}
+{hasNextPage && (
+  <Button disabled={isFetchingNextPage} onClick={() => fetchNextPage()}>
+    Load More
+  </Button>
+)}
+const useGames = (gameQuery: GameQuery) =>
+  useInfiniteQuery<FetchResponse<Game>, Error>({
+    queryKey: ["games", gameQuery],
+    queryFn: ({ pageParam = 1 }) =>
+      apiClient.getAll({
+        params: {
+          genres: gameQuery.genre?.id,
+          parent_platforms: gameQuery.platform?.id,
+          ordering: gameQuery.sortOrder,
+          search: gameQuery.searchText,
+          page: pageParam,
+        },
+      }),
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.next ? allPages.length + 1 : undefined;
+    },
+  });
+
+// useGames.ts
+const useGames = (gameQuery: GameQuery) =>
+  useInfiniteQuery<FetchResponse<Game>, Error>({
+    queryKey: ["games", gameQuery],
+    queryFn: ({ pageParam = 1 }) =>
+      apiClient.getAll({
+        params: {
+          genres: gameQuery.genre?.id,
+          parent_platforms: gameQuery.platform?.id,
+          ordering: gameQuery.sortOrder,
+          search: gameQuery.searchText,
+          page: pageParam,
+        },
+      }),
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.next ? allPages.length + 1 : undefined;
+    },
+  });
 ```
