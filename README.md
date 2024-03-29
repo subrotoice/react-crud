@@ -1433,7 +1433,7 @@ class APIClient<T> {
 export default APIClient;
 ```
 
-### - Implementing Infinite Queries
+### - Implementing Infinite Queries (Data fetches in chanks (Pages))
 
 - In the case of CRUD is more convenient using Class
 - [nextParam](https://prnt.sc/fe1d0phEzpOd)
@@ -1533,4 +1533,117 @@ const useGames = (gameQuery: GameQuery) =>
       return lastPage.next ? allPages.length + 1 : undefined;
     },
   });
+```
+
+### - Implement infinite scroll (GameGrid.tsx)
+
+[React Infinite Scroll Component](https://www.npmjs.com/package/react-infinite-scroll-component)
+
+- DataLenght: represents the number of data currently loaded, and it's used to update the dataLength prop of the InfiniteScroll component.
+- Wrap in <InfiniteScroll>
+
+```bash
+npm i react-infinite-scroll-component
+```
+
+```jsx
+import InfiniteScroll from "react-infinite-scroll-component";
+
+interface Props {
+  gameQuery: GameQuery;
+}
+
+const GameGrid = ({ gameQuery }: Props) => {
+  // const { data, error, isLoading } = useGames(gameQuery);
+  const pageSize = 10;
+  const {
+    data,
+    error,
+    isLoading,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+  } = useGames(gameQuery);
+
+  const skeletons = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+  if (error) return <Text>error</Text>;
+
+  const numberOfDataCurrentlyLoaded =
+    data?.pages.reduce((total, page) => {
+      return total + page.results.length;
+    }, 0) || 0;
+
+  return (
+    <InfiniteScroll
+      dataLength={numberOfDataCurrentlyLoaded} // most importent property
+      next={() => fetchNextPage()}
+      hasMore={!!hasNextPage} // convert to boolean ie. bool || Undifine is false
+      loader={<Spinner />}
+    >
+      <SimpleGrid
+        columns={{ sm: 1, md: 2, lg: 3, xl: 4 }}
+        padding='10px'
+        spacing={6}
+      >
+        {isLoading &&
+          skeletons.map((skeleton) => (
+            <GameCardContainer key={skeleton}>
+              <GameCardSkeleton />
+            </GameCardContainer>
+          ))}
+
+        {data?.pages.map((page, pageIndex) => (
+          <React.Fragment key={pageIndex}>
+            {page.results.map((game, gameIndex) => (
+              <GameCardContainer key={gameIndex}>
+                <GameCard game={game} />
+              </GameCardContainer>
+            ))}
+          </React.Fragment>
+        ))}
+      </SimpleGrid>
+    </InfiniteScroll>
+  );
+};
+```
+
+### -
+
+```jsx
+//
+```
+
+### -
+
+```jsx
+//
+```
+
+### -
+
+```jsx
+//
+```
+
+### -
+
+```jsx
+//
+```
+
+### -
+
+```jsx
+//
+```
+
+### -
+
+```jsx
+//
+```
+
+```
+
 ```
