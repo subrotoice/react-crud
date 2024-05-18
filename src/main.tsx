@@ -6,7 +6,6 @@ import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import App from "./App";
 import theme from "./theme";
 import "./index.css";
-import MyTest from "./components/MyTest";
 
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
@@ -14,7 +13,6 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <ChakraProvider theme={theme}>
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <QueryClientProvider client={queryClient}>
-        {/* <MyTest /> */}
         <App />
         <ReactQueryDevtools />
       </QueryClientProvider>
