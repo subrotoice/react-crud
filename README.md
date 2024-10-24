@@ -12,8 +12,8 @@
 
 ```jsx
 // Horizontal Stack
-<HStack justifyContent='space-between' padding='10px'>
-  <Image src={logo} boxSize='60px' />
+<HStack justifyContent="space-between" padding="10px">
+  <Image src={logo} boxSize="60px" />
   <ColorModeSwitch />
 </HStack>
 ```
@@ -48,7 +48,7 @@ const ColorModeSwitch = () => {
     <div>
       <HStack>
         <Switch
-          colorScheme='green'
+          colorScheme="green"
           isChecked={colorMode === "dark"}
           onChange={toggleColorMode}
         />
@@ -190,7 +190,7 @@ const GameGrid = () => {
 // GameGrid.tsx
 <SimpleGrid
   columns={{ sm: 1, md: 2, lg: 3, xl: 5 }}
-  padding='10px'
+  padding="10px"
   spacing={10}
 >
   {games.map((game) => (
@@ -208,7 +208,7 @@ interface Props {
 
 const GameCard = ({ game }: Props) => {
   return (
-    <Card borderRadius={10} overflow='hidden'>
+    <Card borderRadius={10} overflow="hidden">
       <Image src={game.background_image} />
       <CardBody>
         <Heading fontSize={"2xl"}>{game.name}</Heading>
@@ -281,6 +281,32 @@ const PlatformIconList = ({ platforms }: Props) => {
 export default PlatformIconList;
 ```
 
+### **When Icon is in string format | Not using chakra ui**
+
+```jsx
+// app.tsx
+const iconMap: { [key: string]: IconType } = {
+  FaMobileScreen: FaMobileScreen,
+  FaLaptop: FaLaptop,
+  FaTv: FaTv,
+  FaNetworkWired: FaNetworkWired,
+  FaMicrophoneLines: FaMicrophoneLines,
+};
+
+<IconComponent Icon={iconMap[category.icon]} />;
+
+// IconComponent.tsx
+import { IconType } from "react-icons";
+
+const IconComponent = ({ Icon }: { Icon: IconType }) => {
+  return (
+    <div>
+      <Icon className="my-8 text-6xl" />
+    </div>
+  );
+};
+```
+
 ### - Displaying critic score (CriticScore.tsx)
 
 ```jsx
@@ -291,7 +317,7 @@ export interface Game {
 }
 
 // GameCard.tsx
-<HStack justifyContent='space-between'>
+<HStack justifyContent="space-between">
   <PlatformIconList
     platforms={game.parent_platforms.map((p) => p.platform)} // Passing array of object, but it sending platform property which is also object
   />
@@ -308,7 +334,7 @@ interface Props {
 const CriticScore = ({ score }: Props) => {
   const color = score >= 90 ? "green" : score >= 80 ? "yellow" : "red";
   return (
-    <Badge borderRadius={2} fontSize='14px' paddingX='4px' colorScheme={color}>
+    <Badge borderRadius={2} fontSize="14px" paddingX="4px" colorScheme={color}>
       {score}
     </Badge>
   );
@@ -579,13 +605,13 @@ const GenreList = () => {
     <List>
       {data.map((genre) => (
         <ListItem key={genre.id}>
-          <HStack paddingY='5px'>
+          <HStack paddingY="5px">
             <Image
-              boxSize='32px'
+              boxSize="32px"
               borderRadius={8}
               src={getCroppedImageUrl(genre.image_background)}
             />
-            <Text fontSize='2l'>{genre.name}</Text>
+            <Text fontSize="2l">{genre.name}</Text>
           </HStack>
         </ListItem>
       ))}
@@ -956,8 +982,8 @@ const SearchInput = ({ onSearch }: Props) => {
         <Input
           ref={ref}
           borderRadius={20}
-          placeholder='Search game...'
-          variant='filled'
+          placeholder="Search game..."
+          variant="filled"
         />
       </InputGroup>
     </form>
@@ -978,7 +1004,7 @@ const GameHeading = ({ gameQuery }: Props) => {
     gameQuery.genre?.name || ""
   } Games`;
   return (
-    <Heading as='h1' fontSize='4xl' marginY={5}>
+    <Heading as="h1" fontSize="4xl" marginY={5}>
       {heading}
     </Heading>
   );
@@ -1003,7 +1029,7 @@ const GameHeading = ({ gameQuery }: Props) => {
 <Card>
   <Image src={getCroppedImageUrl(game.background_image)} />
   <CardBody>
-    <HStack justifyContent='space-between' marginBottom={2}>
+    <HStack justifyContent="space-between" marginBottom={2}>
       <PlatformIconList
         platforms={game.parent_platforms.map((p) => p.platform)} // Passing array of object, but it sending platform property which is also object
       />
@@ -1583,7 +1609,7 @@ const GameGrid = ({ gameQuery }: Props) => {
     >
       <SimpleGrid
         columns={{ sm: 1, md: 2, lg: 3, xl: 4 }}
-        padding='10px'
+        padding="10px"
         spacing={6}
       >
         {isLoading &&
@@ -1660,7 +1686,7 @@ const GameHeading = ({ gameQuery }: Props) => {
 
   const heading = `${platform?.name || ""} ${genre?.name || ""} Games`;
   return (
-    <Heading as='h1' fontSize='4xl' marginY={5}>
+    <Heading as="h1" fontSize="4xl" marginY={5}>
       {heading}
     </Heading>
   );
