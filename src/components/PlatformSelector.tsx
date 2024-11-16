@@ -7,16 +7,16 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { BsChevronDown } from "react-icons/bs";
-import usePlatformsStatic, { Platform } from "../hooks/usePlatformsStatic";
 import usePlatform from "../hooks/usePlatform";
+import usePlatformsStatic from "../hooks/usePlatformsStatic";
+import useGameQueryStore from "../store";
 
-interface Props {
-  selectedPlatformId?: number;
-  onSelectPlatform: (platform: Platform | null) => void;
-}
-const PlatformSelector = ({ selectedPlatformId, onSelectPlatform }: Props) => {
+const PlatformSelector = () => {
   const { data, error, isLoading } = usePlatformsStatic();
-  const selectedPlatform = usePlatform(selectedPlatformId);
+
+  const setSelectedPlatformId = useGameQueryStore((s) => s.setPlatformId);
+  const selectedPlatform = usePlatform();
+
   if (error) return null; // A way of codding return here
   if (isLoading) return <Spinner />; // we could use inside last return
 
@@ -30,7 +30,7 @@ const PlatformSelector = ({ selectedPlatformId, onSelectPlatform }: Props) => {
           {data?.results.map((platform) => (
             <MenuItem
               key={platform.id}
-              onClick={() => onSelectPlatform(platform)}
+              onClick={() => setSelectedPlatformId(platform.id)}
             >
               {platform.name}
             </MenuItem>

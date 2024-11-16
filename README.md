@@ -1693,28 +1693,194 @@ const GameHeading = ({ gameQuery }: Props) => {
 };
 ```
 
-### -
+# Zustand for State management [Zustand: React-Basic](https://github.com/subrotoice/react-basic#managing-application-state-with-zustand)
 
-```jsx
-//
+We can get ride of
+
+- Prop drilling
+- Central state update, (Markup and state update logic is in different place)
+- All component re-render, (if we use reducer and context)
+
+### Setting up Zustand store
+
+```bash
+npm i zustand@4.3.7
 ```
 
-### -
+store.ts | useGameQueryStore hook return data(gameQuery) and functions for updating data
 
 ```jsx
-//
+import { create } from "zustand";
+
+interface GameQuery {
+  genreId?: number;
+  platformId?: number;
+  sortOrder?: string;
+  searchText?: string;
+}
+
+interface GameQueryStore {
+  gameQuery: GameQuery;
+  setSearchText: (searchText: string) => void;
+  setGenraId: (genraId: number) => void;
+  setPlatformId: (platformId: number) => void;
+  setSortOrder: (sortOrder: string) => void;
+}
+
+const useGameQueryStore =
+  create <
+  GameQueryStore >
+  ((set) => ({
+    gameQuery: {},
+    setSearchText: (searchText) => set(() => ({ gameQuery: { searchText } })),
+    setGenraId: (genreId) =>
+      set((store) => ({ gameQuery: { ...store.gameQuery, genreId } })),
+    setPlatformId: (platformId) =>
+      set((store) => ({ gameQuery: { ...store.gameQuery, platformId } })),
+    setSortOrder: (sortOrder) =>
+      set((store) => ({ gameQuery: { ...store.gameQuery, sortOrder } })),
+  }));
+
+export default useGameQueryStore;
 ```
 
-### -
+App.tsx | Remove all props which was previously holding data and function
 
 ```jsx
-//
+function App() {
+  return (
+    <Grid
+      templateAreas={{
+        base: `"nav nav" "main main"`,
+        lg: `"nav nav" "aside main"`,
+      }}
+      templateColumns={{
+        base: "1fr",
+        lg: "200px 1fr",
+      }}
+    >
+      <GridItem area="nav">
+        <NavBar />
+      </GridItem>
+      <Show above="lg">
+        <GridItem area="aside" paddingX={5}>
+          <GenreList />
+        </GridItem>
+      </Show>
+      <GridItem area="main">
+        <Box paddingLeft={2}>
+          <GameHeading />
+          <HStack spacing={5} paddingBottom={5}>
+            <PlatformSelector />
+            <SortSelector />
+          </HStack>
+        </Box>
+        <GameGrid />
+      </GridItem>
+    </Grid>
+  );
+}
 ```
 
-### -
+NavBar.tsx | No Props and Updater here, Now it is managing centrally from store using zustand
 
 ```jsx
-//
+// Old NavBar
+interface Props {
+  onSearch: (searchText: string) => void;
+}
+
+const NavBar = ({ onSearch }: Props) => {
+  return (
+    <div>
+      <HStack justifyContent="space-between" padding="10px">
+        <Image src={logo} boxSize="60px" />
+        <SearchInput onSearch={onSearch} />
+        <ColorModeSwitch />
+      </HStack>
+    </div>
+  );
+};
+
+// New NavBar after Zustand
+const NavBar = () => {
+  return (
+    <div>
+      <HStack justifyContent="space-between" padding="10px">
+        <Image src={logo} boxSize="60px" />
+        <SearchInput />
+        <ColorModeSwitch />
+      </HStack>
+    </div>
+  );
+};
+```
+
+PlatformSelector.tsx | No Props and Updater here, Now it is managing centrally from store using zustand
+
+```jsx
+// Old PlatformSelector
+interface Props {
+  selectedPlatformId?: number;
+  onSelectPlatform: (platform: Platform | null) => void;
+}
+const PlatformSelector = ({ selectedPlatformId, onSelectPlatform }: Props) => {
+  const { data, error, isLoading } = usePlatformsStatic();
+  const selectedPlatform = usePlatform(selectedPlatformId);
+  if (error) return null; // A way of codding return here
+  if (isLoading) return <Spinner />; // we could use inside last return
+
+  return (
+    <div>
+      <Menu>
+        <MenuButton as={Button} rightIcon={<BsChevronDown />}>
+          {selectedPlatform?.name || "Platform"}
+        </MenuButton>
+        <MenuList>
+          {data?.results.map((platform) => (
+            <MenuItem
+              key={platform.id}
+              onClick={() => onSelectPlatform(platform)}
+            >
+              {platform.name}
+            </MenuItem>
+          ))}
+        </MenuList>
+      </Menu>
+    </div>
+  );
+};
+
+// New PlatformSelector after Zustand
+const PlatformSelector = () => {
+  const { data, error, isLoading } = usePlatformsStatic();
+
+  const setSelectedPlatformId = useGameQueryStore((s) => s.setPlatformId);
+  const selectedPlatform = usePlatform();
+
+  if (error) return null; // A way of codding return here
+  if (isLoading) return <Spinner />; // we could use inside last return
+
+  return (
+    <div>
+      <Menu>
+        <MenuButton as={Button} rightIcon={<BsChevronDown />}>
+          {selectedPlatform?.name || "Platform"}
+        </MenuButton>
+        <MenuList>
+          {data?.results.map((platform) => (
+            <MenuItem
+              key={platform.id}
+              onClick={() => setSelectedPlatformId(platform.id)}
+            >
+              {platform.name}
+            </MenuItem>
+          ))}
+        </MenuList>
+      </Menu>
+    </div>
+  );
+};
 ```
 
 ```
