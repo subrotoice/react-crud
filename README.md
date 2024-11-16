@@ -2072,3 +2072,7 @@ const GameDetailsPage = () => {
   );
 };
 ```
+
+### **Refactoring Entities**
+
+**Right click on Game and "move to new file" Then move that file to entities folder**
