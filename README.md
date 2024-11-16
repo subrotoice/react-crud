@@ -1926,3 +1926,42 @@ const router = createBrowserRouter([
 
 export default router;
 ```
+
+### **Handling Errors**
+
+routes.tsx
+
+```jsx
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    errorElement: <ErrorPage />,
+    children: [
+      { index: true, element: <HomePage /> },
+      { path: "games/:id", element: <GameDetails /> },
+    ],
+  },
+]);
+```
+
+ErrorPage.tsx
+
+```jsx
+const ErrorPage = () => {
+  const error = useRouteError();
+  return (
+    <div>
+      <NavBar />
+      <Box padding={5}>
+        <Heading>Opps</Heading>
+        <Text>
+          {isRouteErrorResponse(error)
+            ? "Page Does not exist"
+            : "An Unexpected Error occured"}
+        </Text>
+      </Box>
+    </div>
+  );
+};
+```
