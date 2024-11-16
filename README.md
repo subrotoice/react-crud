@@ -1965,3 +1965,110 @@ const ErrorPage = () => {
   );
 };
 ```
+
+### **Fetching a Game (Little bit tricky)**
+
+1. GameCard.tsx | Create link using React-Router-Dom
+
+```jsx
+<Heading fontSize={"2xl"}>
+  <Link to={"/games/" + game.slug}>{game.name}</Link>
+</Heading>
+```
+
+2. GameCardContainer.tsx | Add Hover effect
+
+```jsx
+return (
+  <Box
+    _hover={{
+      transform: "scale(1.03)",
+      transition: "transform .20s ease-in",
+    }}
+    borderRadius={10}
+    overflow="hidden"
+  >
+    {children}
+  </Box>
+);
+```
+
+3. useGame.tsx | Hook for fetching game
+
+```jsx
+import { useQuery } from "@tanstack/react-query";
+import APIClient from "../services/api-client";
+import { Game } from "./useGames";
+
+const apiClient = new APIClient() < Game > "/games";
+
+const useGame = (slug: string) =>
+  useQuery({ queryKey: ["games", slug], queryFn: () => apiClient.get(slug) });
+
+export default useGame;
+```
+
+4. api-client.ts | Add get function for fetching single game
+
+```jsx
+import axios, { AxiosRequestConfig } from "axios";
+
+export interface FetchResponse<T> {
+  count: number;
+  next: string | null;
+  results: T[];
+}
+
+const axiosInstance = axios.create({
+  baseURL: "https://api.rawg.io/api",
+  params: {
+    //params is query String https://api.rawg.io/api/platforms?key=YOUR_API_KEY
+    key: "b0d7069520c04a5c8e168712f0464506",
+  },
+});
+
+class APIClient<T> {
+  endPoint: string;
+  constructor(endPoint: string) {
+    this.endPoint = endPoint;
+  }
+
+  getAll = (config: AxiosRequestConfig) => {
+    return (
+      axiosInstance.get <
+      FetchResponse <
+      T >> (this.endPoint, config).then((res) => res.data)
+    );
+  };
+
+  get = (id: number | string) => {
+    return (
+      axiosInstance.get < T > (this.endPoint + "/" + id).then((res) => res.data)
+    );
+  };
+}
+
+export default APIClient;
+```
+
+5. GameDetailsPage.tsx | Getting slug and use hook useGame(slug)
+
+```jsx
+import { useParams } from "react-router-dom";
+import useGame from "../hooks/useGame";
+
+const GameDetailsPage = () => {
+  const { slug } = useParams();
+  const { data: game, isLoading, error } = useGame(slug!);
+
+  if (isLoading) return <Spinner />;
+  if (error || !game) throw error;
+
+  return (
+    <div>
+      <Heading>{game.name}</Heading>
+      <Text>{game.description_raw}</Text>
+    </div>
+  );
+};
+```
