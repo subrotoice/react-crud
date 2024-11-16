@@ -1883,6 +1883,46 @@ const PlatformSelector = () => {
 };
 ```
 
+# React-Router-Dom [React-Router: React-Basic](https://github.com/subrotoice/react-basic?tab=readme-ov-file#ch-3-react-router)
+
+### Setting up React-Router-Dom
+
+```bash
+npm i react-router-dome@6.10.0
 ```
 
+- _Create: src > pages > layout.tsx_
+- _Create: src > pages > HomePage.tsx_
+  layout.tsx
+
+```jsx
+import { Outlet } from "react-router-dom";
+
+const layout = () => {
+  return (
+    <div>
+      <NavBar />
+      <Outlet />
+    </div>
+  );
+};
+```
+
+routes.tsx
+
+```jsx
+import { createBrowserRouter } from "react-router-dom";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      { index: true, element: <HomePage /> },
+      { path: "games/:id", element: <GameDetails /> },
+    ],
+  },
+]);
+
+export default router;
 ```
