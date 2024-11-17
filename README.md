@@ -2076,3 +2076,139 @@ const GameDetailsPage = () => {
 ### **Refactoring Entities**
 
 **Right click on Game and "move to new file" Then move that file to entities folder**
+
+### **Building Expandable Text**
+
+GameDetailsPage.tsx
+
+```jsx
+import Expandable from "../components/Expandable";
+
+const GameDetailsPage = () => {
+  const [showMore, setShowMore] = useState(false);
+  const { slug } = useParams();
+  const { data: game, isLoading, error } = useGame(slug!);
+
+  if (isLoading) return <Spinner />;
+  if (error || !game) throw error;
+
+  return (
+    <div>
+      <Heading>{game.name}</Heading>
+      <Expandable>{game.description_raw}</Expandable>
+    </div>
+  );
+};
+```
+
+_Level of Codding_ <br >
+Expandable.tsx | Very smart codding how expandable implemented
+
+```jsx
+import { useState } from "react";
+
+interface Props {
+  children: string;
+}
+
+const Expandable = ({ children }: Props) => {
+  const [expanded, setExpanded] = useState(false);
+  const limit = 300;
+  if (children.length < limit) return <Text>{children}</Text>;
+
+  const summary = expanded ? children : children.substring(0, limit) + "...";
+
+  return (
+    <Text>
+      {summary}
+      <Button
+        size="xs"
+        onClick={() => setExpanded(!expanded)}
+        colorScheme="yellow"
+        fontWeight="bold"
+        marginLeft={2}
+      >
+        {expanded ? "Show Less" : "Show More"}
+      </Button>
+    </Text>
+  );
+};
+
+export default Expandable;
+```
+
+### **Building Game Attributes: Another beauty of code** [See](https://prnt.sc/PsotYwf4DAJO)
+
+1. GameDetailsPage.tsx
+
+```jsx
+return (
+  <div>
+    <Heading>{game.name}</Heading>
+    <Expandable>{game.description_raw}</Expandable>
+    <GameAttributes game={game} />
+  </div>
+);
+```
+
+2. GameAttributes.tsx | Contains mark up
+
+```jsx
+import DefinationItem from "./DefinationItem";
+
+interface Props {
+  game: Game;
+}
+
+const GameAttributes = ({ game }: Props) => {
+  return (
+    <div>
+      <SimpleGrid columns={2} as="dl">
+        <DefinationItem terms="Platforms">
+          {game.parent_platforms?.map(({ platform }) => (
+            <Text key={platform.id}>{platform.name}</Text>
+          ))}
+        </DefinationItem>
+        <DefinationItem terms="Metascore">
+          <CriticScore score={game.metacritic} />
+        </DefinationItem>
+        <DefinationItem terms="Genres">
+          {game.genres?.map((genre) => (
+            <Text key={genre.id}>{genre.name}</Text>
+          ))}
+        </DefinationItem>
+        <DefinationItem terms="Publishers">
+          {game.publishers?.map((publisher) => (
+            <Text key={publisher.id}>{publisher.name}</Text>
+          ))}
+        </DefinationItem>
+      </SimpleGrid>
+    </div>
+  );
+};
+
+export default GameAttributes;
+```
+
+3. DefinationItem.tsx | DD, DT | Same look so make it as component
+
+```jsx
+import { Box, Heading } from "@chakra-ui/react";
+
+interface Props {
+  terms: string;
+  children: ReactNode | ReactNode[];
+}
+const DefinationItem = ({ terms, children }: Props) => {
+  return (
+    <>
+      <Box marginY={5}>
+        <Heading as="dt" fontSize="md" color="gray.600">
+          {terms}
+        </Heading>
+        <dd>{children}</dd>
+      </Box>
+    </>
+  );
+};
+```
