@@ -2212,3 +2212,59 @@ const DefinationItem = ({ terms, children }: Props) => {
   );
 };
 ```
+
+### **Building Game Trailer**
+
+1. GameDetailsPage.tsx
+
+```jsx
+return (
+  <div>
+    <Heading>{game.name}</Heading>
+    <Expandable>{game.description_raw}</Expandable>
+    <GameAttributes game={game} />
+    <GameTrailer gameId={game.id} />
+  </div>
+);
+```
+
+2. GameTrailer.tsx | Component for desplaying trailer
+
+```jsx
+import useTrailers from "../hooks/useTrailers";
+
+interface Props {
+  gameId: number;
+}
+
+const GameTrailer = ({ gameId }: Props) => {
+  const { data, isLoading, error } = useTrailers(gameId);
+  if (isLoading) return null;
+  if (error) throw error;
+
+  const first = data?.results[0];
+  return first ? (
+    <video src={first.data["max"]} controls poster={first.preview} />
+  ) : null;
+};
+
+export default GameTrailer;
+```
+
+3. useTrailers.ts | Hook for fetching data
+
+```jsx
+import { useQuery } from "@tanstack/react-query";
+import APIClient from "../services/api-client";
+import { Trailer } from "../entities/Trailer";
+
+const useTrailers = (gameId: number) => {
+  const apiClient = new APIClient() < Trailer > `/games/${gameId}/movies`;
+  return useQuery({
+    queryKey: ["trailers", gameId],
+    queryFn: apiClient.getAll,
+  });
+};
+
+export default useTrailers;
+```
