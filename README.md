@@ -2271,6 +2271,114 @@ export default useTrailers;
 
 ### **Building Game Screenshots**
 
-```jsx
+1. hooks/useScreenshots.ts | passing endpoint and getting data from server
 
+```jsx
+import { useQuery } from "@tanstack/react-query";
+import APIClient from "../services/api-client";
+import { Screenshots } from "../entities/Screenshots";
+
+const useScreenshots = (gameId: number) => {
+  const apiClient =
+    new APIClient() < Screenshots > `/games/${gameId}/screenshots`;
+  return useQuery({
+    queryKey: ["screenshots", gameId],
+    queryFn: apiClient.getAll,
+  });
+};
+
+export default useScreenshots;
+```
+
+2. entities/useScreenshots.ts | Just creating for step 1
+
+```jsx
+export interface Screenshots {
+  id: number;
+  image: string;
+  height: number;
+  width: number;
+}
+```
+
+3. components/GameScreenshots.ts | UI for displaing data
+
+```jsx
+import { Image, SimpleGrid } from "@chakra-ui/react";
+import useScreenshots from "../hooks/useScreenshots";
+
+interface Props {
+  gameId: number;
+}
+const GameScreenshots = ({ gameId }: Props) => {
+  const { data, isLoading, error } = useScreenshots(gameId);
+
+  if (isLoading) return null;
+
+  if (error) throw error;
+
+  return (
+    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={2}>
+      {data?.results.map((file) => (
+        <Image key={file.id} src={file.image} />
+      ))}
+    </SimpleGrid>
+  );
+};
+```
+
+4. pages/GameDetailsPage.ts | Insert GameScreenshots ui component in the page
+
+```jsx
+import GameScreenshots from "../components/GameScreenshots";
+
+const GameDetailsPage = () => {
+  const { slug } = useParams();
+  const { data: game, isLoading, error } = useGame(slug!);
+
+  if (isLoading) return <Spinner />;
+  if (error || !game) throw error;
+
+  return (
+    <div>
+      <Heading>{game.name}</Heading>
+      <Expandable>{game.description_raw}</Expandable>
+      <GameAttributes game={game} />
+      <GameTrailer gameId={game.id} />
+      <GameScreenshots gameId={game.id} />
+    </div>
+  );
+};
+```
+
+### **Improving the Layout | 2 columns layout using simplegrid of Chakra**
+
+pages/GameDetailsPage.tsx
+
+```jsx
+import { Box, Heading, SimpleGrid, Spinner } from "@chakra-ui/react";
+
+const GameDetailsPage = () => {
+  const { slug } = useParams();
+  const { data: game, isLoading, error } = useGame(slug!);
+
+  if (isLoading) return <Spinner />;
+  if (error || !game) throw error;
+
+  return (
+    <div>
+      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5}>
+        <Box>
+          <Heading>{game.name}</Heading>
+          <Expandable>{game.description_raw}</Expandable>
+          <GameAttributes game={game} />
+        </Box>
+        <Box>
+          <GameTrailer gameId={game.id} />
+          <GameScreenshots gameId={game.id} />
+        </Box>
+      </SimpleGrid>
+    </div>
+  );
+};
 ```
