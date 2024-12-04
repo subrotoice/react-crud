@@ -2421,8 +2421,29 @@ const SearchInput = () => {
 };
 ```
 
-### **Refactoring Entities**
+### **Refactoring Entities | Makeing Default export instade of Name**
+
+It is recomended to use default exports when there is a single export in a file. Default export no need {}
+Step 1: Refactor: [Rind All References](https://img001.prntscr.com/file/img001/Ct9mF9S4QLCbjxOcMZvuNQ.jpeg)
+Step 2: Make change all files accordingly
+
+entities/Game.ts | Make it default and change all files accordingly
 
 ```jsx
+import { Genre } from "./Genre";
 
+export default interface Game {
+  id: number;
+  name: string;
+  background_image: string;
+  description_raw: string;
+  parent_platforms: { platform: Platform }[]; // Very Crutial: Design Smale; https://prnt.sc/Mzc4SBafvAjL
+  metacritic: number;
+  rating_top: number;
+  slug: string;
+  genres: Genre[];
+  publishers: Publisher[];
+}
 ```
+
+Do it for all entities like: Genre.ts, Platform.ts...
