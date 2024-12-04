@@ -2382,3 +2382,47 @@ const GameDetailsPage = () => {
   );
 };
 ```
+
+### **Fixing the NavBar**
+
+Present if we are in a certain game page and search something in searchbox then nothing show. But data is comming.<br />
+Because we are in a game page where no information is showing about game. So we need to take back to homepage using react router.<br />
+
+components/SearchInput.tsx
+
+```jsx
+import { useNavigate } from "react-router-dom";
+
+const SearchInput = () => {
+  const setSearchText = useGameQueryStore((s) => s.setSearchText);
+  const ref = useRef < HTMLInputElement > null;
+  const navigate = useNavigate();
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (ref.current) {
+          setSearchText(ref.current.value);
+          navigate("/"); // Added | Taking to homepage for showing search results
+        }
+      }}
+    >
+      <InputGroup>
+        <InputLeftElement children={<BsSearch />} />
+        <Input
+          ref={ref}
+          borderRadius={20}
+          placeholder="Search game..."
+          variant="filled"
+        />
+      </InputGroup>
+    </form>
+  );
+};
+```
+
+### **Refactoring Entities**
+
+```jsx
+
+```
