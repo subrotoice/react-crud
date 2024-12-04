@@ -2268,3 +2268,9 @@ const useTrailers = (gameId: number) => {
 
 export default useTrailers;
 ```
+
+### **Building Game Screenshots**
+
+```jsx
+
+```
